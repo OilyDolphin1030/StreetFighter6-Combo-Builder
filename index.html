@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SF6 Combo Icon Builder</title>
+  <style>
+    :root{
+      --bg:#101116; --panel:#1b1e27; --panel2:#222634; --line:#353a48;
+      --text:#f5f7fb; --muted:#aeb5c3; --accent:#4e9cff; --green:#36b37e;
+      --danger:#ff5d5d; --orange:#ffb347; --purple:#9b7bff;
+      --pc:#d83b3b; --ch:#f0c62e; --jc:#8b5cf6; --drive:#28a85f;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    header{max-width:980px;margin:auto;padding:16px 12px 6px}
+    h1{font-size:20px;margin:0 0 6px}
+    p{margin:0;color:var(--muted);font-size:13px}
+    main{max-width:980px;margin:auto;padding:10px 12px 28px;display:grid;gap:12px}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .screen-switch-panel{padding:8px;background:linear-gradient(180deg,#202432,#171a23)}
+    .screen-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .screen-switch .nav{min-height:54px;padding:8px 42px 8px 12px;position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;text-align:left;background:#252a38;border-color:#434a5e;color:#c9cfdb;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+    .screen-switch .nav:hover{border-color:#6c9de0}
+    .screen-switch .nav.active{background:linear-gradient(180deg,#1767b7,#104d8b);border-color:#71b4ff;color:#fff;box-shadow:0 0 0 2px rgba(78,156,255,.16),0 8px 20px rgba(0,0,0,.28)}
+    .nav-kicker{font-size:9px;letter-spacing:.12em;opacity:.72;line-height:1}
+    .nav-label{font-size:15px;font-weight:900;line-height:1.15}
+    .nav-arrow{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:24px;line-height:1;opacity:.88}
+    button,.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:8px 11px;font-weight:800;cursor:pointer;font-size:13px}
+    button:hover{filter:brightness(1.12);border-color:var(--accent)}
+    .primary{background:#15579e;border-color:#367fd1}
+    .save{background:#12643f;border-color:#279668}
+    .copy{background:#5a3fb0;border-color:#8068e8}
+    .share{background:#174f5a;border-color:#36a5b8}
+    .danger{background:#703030;border-color:#b34b4b}
+    .nav{background:#26344f;border-color:#4674ba}
+    .nav.active{background:#0f5eaa;border-color:#62a9ff}
+    .utility{background:#5b4a1b;border-color:#ad8730}
+    .screen{display:none}
+    .screen.active{display:grid;gap:12px}
+    .hidden{display:none!important}
+    .meta{display:grid;grid-template-columns:auto minmax(130px,180px) auto minmax(140px,1fr) auto;gap:8px;align-items:center}
+    label{font-size:13px;color:var(--muted);font-weight:800}
+    select,input,textarea{width:100%;background:#11131a;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px}
+    textarea{min-height:58px;resize:vertical}
+    .input-area{display:grid;grid-template-columns:minmax(126px,190px) minmax(220px,1fr) 64px;grid-template-areas:'arrows attacks tools';gap:10px;align-items:start;min-width:0}
+    .arrow-wrap{grid-area:arrows;min-width:0}
+    .attack-wrap{grid-area:attacks;min-width:0}
+    .side-tools{grid-area:tools;display:grid;grid-template-columns:1fr;gap:6px;margin-top:25px;min-width:0}
+    .group-title{font-size:14px;font-weight:900;color:var(--muted);margin:0 0 8px}
+    .arrow-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .arrow-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
+    .arrow-actions button{width:100%;min-width:0;padding:7px 4px;font-size:11px;white-space:nowrap}
+    .attack-pad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+    .counter-pad{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:6px}
+    .icon-button{height:clamp(48px,7vw,64px);padding:3px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:#272b38;min-width:0;overflow:hidden}
+    .attack-button.punch{background:linear-gradient(180deg,#243a66,#252936);border-color:#5b88df}
+    .attack-button.kick{background:linear-gradient(180deg,#5a3325,#252936);border-color:#df8d4b}
+    .attack-button.system{background:linear-gradient(180deg,#33384b,#252936);border-color:#60677e}
+    .attack-button.pc{background:linear-gradient(180deg,#c52f38,#6e1c22);border-color:#ff6b73}
+    .attack-button.ch{background:linear-gradient(180deg,#f3cf3c,#b98a08);border-color:#ffe47a;color:#16130a}
+    .attack-button.jc{background:linear-gradient(180deg,#8e5ce6,#4f2b92);border-color:#c7a5ff}
+    .attack-button.drive{background:linear-gradient(180deg,#28a85f,#17663a);border-color:#71dfa0}
+    .attack-button.ch strong{color:#17140b}
+    .attack-button.ch .btn-label{color:#17140b;background:rgba(255,255,255,.58);border-color:rgba(0,0,0,.18)}
+    .counter-pad .icon-button{height:clamp(38px,5.4vw,48px)}
+    .counter-pad .icon-button strong{font-size:clamp(11px,2.4vw,17px);letter-spacing:-.04em}
+    .counter-pad .cdr-button strong{font-size:clamp(11px,2.4vw,17px);letter-spacing:-.04em}
+    .counter-pad .btn-label{font-size:8px;padding:1px 3px}
+    .custom-palette-wrap{margin-top:6px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px;align-items:center}
+    .custom-palette-wrap.hidden{display:none!important}
+    .custom-palette-title{font-size:10px;color:var(--muted);font-weight:900;white-space:nowrap}
+    .custom-pad{display:grid;grid-template-columns:repeat(auto-fit,minmax(44px,1fr));gap:4px;min-width:0}
+    .reusable-custom-button{height:32px;min-width:0;padding:2px 5px;border-radius:8px;font-size:10px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-width:1px}
+    .reusable-custom-button:hover{filter:brightness(1.12)}
+    .attack-pad > *, .counter-pad > *, .arrow-pad > *, .side-tools > *{min-width:0}
+    .icon-button img{width:clamp(28px,4.7vw,42px);height:clamp(28px,4.7vw,42px);object-fit:contain;max-width:100%}
+    .icon-button span{font-size:10px;color:var(--muted);line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .attack-button .btn-label{font-size:12px;color:#fff;background:rgba(0,0,0,.48);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:2px 6px;font-weight:900;line-height:1;letter-spacing:.02em}
+    .icon-button strong{font-size:clamp(15px,3.8vw,24px);line-height:.95;white-space:pre-line;max-width:100%;overflow:hidden;text-align:center}
+    .tc-button strong{font-size:clamp(13px,3.2vw,20px);letter-spacing:-.03em}
+    .tool-button{height:46px;background:#313547;padding:4px;border-radius:9px;overflow:hidden}
+    .tool-button strong{font-size:13px;line-height:1;display:block;white-space:nowrap}
+    .tool-button span{font-size:8px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hold-button{background:linear-gradient(180deg,#46516a,#282d3c);border-color:#8391ad}
+    .hold-button strong{font-size:11px;letter-spacing:-.03em}
+    .custom-tool{background:linear-gradient(180deg,#4b3d61,#2d2838);border-color:#8c70b4}
+    .custom-tool strong{font-size:15px}
+    .output{min-height:78px;border:2px dashed #5b6277;border-radius:14px;background:#0b0c10;padding:10px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;align-content:flex-start;overflow:visible}
+    .output img{width:24px;height:24px;object-fit:contain;flex:0 0 auto}
+    .mini-output img{width:26px;height:26px;object-fit:contain;flex:0 0 auto}
+    .out-chip{width:24px;min-width:24px;max-width:24px;height:24px;border-radius:999px;background:#303443;border:1px solid #626a80;display:inline-flex!important;align-items:center;justify-content:center;font-weight:900;font-size:10px;flex:0 0 24px!important;white-space:pre-line;text-align:center;line-height:1.05;overflow:hidden}.out-chip.wide-chip{width:40px;min-width:40px;max-width:40px;flex-basis:40px!important;font-size:9px}
+    .out-chip.pc-chip{background:#b52d35;border-color:#ff7077;color:#fff}
+    .out-chip.ch-chip{background:#e5bd27;border-color:#ffe47a;color:#17140b}
+    .out-chip.jc-chip{background:#7442c4;border-color:#c5a2ff;color:#fff}
+    .out-chip.drive-chip{background:#218b50;border-color:#71dfa0;color:#fff}
+    .out-chip.hold-chip{background:#46516a;border-color:#9eabc5;color:#fff;width:38px;min-width:38px;max-width:38px;flex-basis:38px!important;font-size:9px}
+    .out-chip.custom-chip{width:auto;min-width:30px;max-width:78px;flex-basis:auto!important;padding:0 7px;font-size:9px;border-radius:9px;background:#4b3d61;border-color:#9b7bc2;color:#fff;text-overflow:ellipsis}
+    .mini-output .out-chip{width:26px;min-width:26px;max-width:26px;height:26px;flex-basis:26px!important;font-size:10px}.mini-output .out-chip.wide-chip{width:42px;min-width:42px;max-width:42px;flex-basis:42px!important;font-size:9px}
+    .mini-output .out-chip.hold-chip{width:40px;min-width:40px;max-width:40px;flex-basis:40px!important}
+    .mini-output .out-chip.custom-chip{width:auto;min-width:32px;max-width:84px;flex-basis:auto!important;padding:0 7px}
+    .separator{width:16px!important;min-width:16px!important;max-width:16px!important;flex-basis:16px!important;background:transparent;border:0;font-size:18px;overflow:visible}
+    .mini-output .separator{width:16px!important;min-width:16px!important;max-width:16px!important;flex-basis:16px!important;font-size:18px}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;display:flex;align-items:center;justify-content:center;padding:14px}
+    .modal-card{width:min(520px,100%);max-height:min(760px,92vh);overflow:auto;background:var(--panel);border:1px solid #51586c;border-radius:16px;padding:14px;box-shadow:0 18px 60px rgba(0,0,0,.55)}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .modal-head strong{font-size:17px}
+    .modal-close{padding:6px 10px;background:#343847}
+    .custom-form{display:grid;gap:10px}
+    .custom-colors{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .color-field{display:grid;grid-template-columns:1fr 48px;gap:7px;align-items:center}
+    .color-field input[type=color]{height:40px;padding:3px;border-radius:9px;cursor:pointer}
+    .custom-preview{min-height:48px;border:1px dashed #5b6277;border-radius:10px;background:#0d0f15;display:flex;align-items:center;justify-content:center;padding:8px}
+    .custom-preview-chip{min-width:56px;max-width:180px;height:32px;border-radius:8px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid rgba(255,255,255,.38)}
+    .custom-manager-list{display:grid;gap:7px;margin-top:12px}
+    .custom-manager-empty{font-size:12px;color:var(--muted);padding:10px 2px}
+    .custom-manager-row{display:grid;grid-template-columns:minmax(0,1fr) 58px 58px;gap:6px;align-items:center;background:#141720;border:1px solid var(--line);border-radius:10px;padding:7px}
+    .custom-manager-sample{height:32px;min-width:0;border-radius:8px;padding:0 9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid rgba(255,255,255,.36)}
+    .newline{flex-basis:100%;height:0}
+    .charged{padding:2px;border-radius:8px;background:linear-gradient(135deg,#fff176,#ffb300,#f57c00);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+    .charged img{display:block}
+    .empty{color:#7f8797;font-size:14px}
+    .hint{font-size:12px;color:var(--muted);margin-top:8px}
+    .panel-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+    .panel-title-row h2,.panel-title-row .group-title{margin:0}
+    .panel-title-row button{flex:0 0 auto}
+    .paste-grid{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+    .saved-list{display:grid;gap:10px}
+    .combo-card{background:#151821;border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:8px}
+    .combo-head{display:grid;grid-template-columns:minmax(0,1fr) 226px;grid-template-areas:'character actions' 'title title';gap:6px 10px;align-items:start}
+    .combo-character{grid-area:character;font-weight:900;min-width:0;overflow-wrap:anywhere;line-height:1.4;padding-top:7px}
+    .combo-title{grid-area:title;font-weight:800;min-width:0;overflow-wrap:anywhere;line-height:1.4;color:#dfe4ef}
+    .combo-actions{grid-area:actions;display:grid;grid-template-columns:44px 44px 61px 61px;gap:6px;width:226px;justify-self:end}
+    .combo-actions button{width:100%;min-width:0;padding:8px 5px;white-space:nowrap}
+    .combo-actions .action-placeholder{visibility:hidden;pointer-events:none}
+    .mini-output{display:flex;flex-wrap:wrap;gap:5px;align-items:center;background:#0c0d12;border-radius:10px;padding:8px;min-height:50px}
+    @media(max-width:680px){
+      header{padding:12px 9px 5px}main{padding:7px 8px 22px;gap:9px}.panel{padding:10px;border-radius:12px}.screen-switch-panel{padding:6px}.screen-switch{gap:5px}.screen-switch .nav{min-height:48px;padding:7px 31px 7px 9px;border-radius:9px}.nav-kicker{font-size:8px}.nav-label{font-size:12px}.nav-arrow{right:9px;font-size:20px}.meta{grid-template-columns:42px 1fr;gap:7px}.meta button{grid-column:1/-1}.input-area{grid-template-columns:minmax(92px,31%) minmax(0,1fr);grid-template-areas:'arrows attacks' 'tools tools';gap:7px}.side-tools{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:0}.attack-pad{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.counter-pad{gap:4px;margin-top:4px}.arrow-pad{gap:4px}.arrow-actions{gap:4px;margin-top:5px}.arrow-actions button{padding:6px 2px;font-size:9px}.icon-button{height:clamp(43px,12.7vw,52px);padding:2px;border-radius:8px}.counter-pad .icon-button{height:38px}.icon-button img{width:clamp(24px,7.4vw,34px);height:clamp(24px,7.4vw,34px)}.icon-button strong{font-size:clamp(12px,3.8vw,18px)}.attack-button .btn-label{font-size:9px;padding:1px 4px}.tc-button strong{font-size:clamp(11px,3.3vw,15px)}.tool-button{height:36px;padding:2px;border-radius:8px}.tool-button strong{font-size:11px}.hold-button strong{font-size:10px}.custom-tool strong{font-size:14px}.tool-button span{font-size:7px}.custom-palette-wrap{grid-template-columns:1fr;gap:3px}.custom-palette-title{display:none}.custom-pad{grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}.reusable-custom-button{height:29px;font-size:9px;padding:2px 3px}.paste-grid{grid-template-columns:1fr}.toolbar{gap:6px}.toolbar button{padding:7px 8px;font-size:12px}.group-title{font-size:12px;margin-bottom:6px}.combo-head{grid-template-columns:minmax(0,1fr) 202px}.combo-actions{grid-template-columns:38px 38px 57px 57px;width:202px;gap:4px}.combo-actions button{font-size:12px;padding:7px 3px}
+    }
+    @media(max-width:390px){
+      main{padding-left:5px;padding-right:5px}.panel{padding:8px}.input-area{grid-template-columns:minmax(84px,30%) minmax(0,1fr);gap:5px}.arrow-pad,.attack-pad,.counter-pad{gap:3px}.icon-button{height:42px}.counter-pad .icon-button{height:35px}.icon-button img{width:23px;height:23px}.counter-pad .icon-button strong{font-size:10px}.counter-pad .btn-label{font-size:7px}.side-tools{gap:3px}.tool-button{height:34px}.custom-pad{grid-template-columns:repeat(4,minmax(0,1fr))}.reusable-custom-button{height:27px;font-size:8px}.custom-colors{grid-template-columns:1fr}.custom-manager-row{grid-template-columns:minmax(0,1fr) 50px 50px}.combo-head{grid-template-columns:minmax(0,1fr) 190px}.combo-actions{grid-template-columns:35px 35px 54px 54px;width:190px;gap:4px}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>SF6 Combo Icon Builder</h1>
+</header>
+<main>
+  <section class="panel screen-switch-panel">
+    <div class="screen-switch" role="tablist" aria-label="画面切替">
+      <button class="nav active" id="showCreate" role="tab" aria-selected="true">
+        <span class="nav-kicker">CREATE</span><span class="nav-label">コンボ作成</span><span class="nav-arrow">›</span>
+      </button>
+      <button class="nav" id="showSaved" role="tab" aria-selected="false">
+        <span class="nav-kicker">LIBRARY</span><span class="nav-label">保存コンボ確認</span><span class="nav-arrow">›</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="screen active" id="createScreen">
+    <section class="panel meta">
+      <label>キャラ</label>
+      <select id="character"></select>
+      <label>コンボ名</label>
+      <input id="comboName" placeholder="例: 小技始動 / 確反">
+      <button class="save" id="saveBtn">コンボ保存</button>
+    </section>
+
+    <section class="panel">
+      <div class="input-area">
+        <div class="arrow-wrap">
+          <div class="group-title">矢印</div>
+          <div class="arrow-pad" id="arrowPad"></div>
+          <div class="arrow-actions">
+            <button class="utility" id="undoBtn">1つ戻す</button>
+            <button class="danger" id="clearBtn">全部消す</button>
+          </div>
+        </div>
+        <div class="attack-wrap">
+          <div class="group-title">攻撃</div>
+          <div class="attack-pad" id="attackPad"></div>
+          <div class="counter-pad" id="counterPad"></div>
+          <div class="custom-palette-wrap hidden" id="customPaletteWrap">
+            <div class="custom-palette-title">カスタム</div>
+            <div class="custom-pad" id="customPad"></div>
+          </div>
+        </div>
+        <div class="side-tools" id="sideTools"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title-row">
+        <h2 style="font-size:15px">出力スペース</h2>
+        <button class="copy" id="copyImageBtn">画像としてコピー</button>
+      </div>
+      <div class="output" id="output"><span class="empty">ここにアイコンが表示されます</span></div>
+      <div class="hint" id="status">選択中: なし</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title-row">
+        <div class="group-title">並びテキストから画像化</div>
+        <button class="copy" id="copyTextBtn">並びをコピー</button>
+      </div>
+      <div class="paste-grid">
+        <textarea id="pasteText" placeholder="例: 下 弱P 弱P > 右下 下 右 中P&#10;※「並びをコピー」でコピーしたテキストを貼り付けできます"></textarea>
+        <button class="primary" id="pasteBuildBtn">貼り付け内容を画像化</button>
+      </div>
+    </section>
+  </section>
+
+  <section class="screen" id="savedScreen">
+    <section class="panel">
+      <div class="toolbar" style="justify-content:space-between">
+        <strong>保存済みコンボ</strong>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label>表示キャラ</label>
+          <select id="filterCharacter" style="min-width:150px"></select>
+        </div>
+      </div>
+      <div class="toolbar" style="margin-top:10px">
+        <button class="share" id="exportCombosBtn">共有ファイルを書き出し</button>
+        <button class="primary" id="importCombosBtn">共有ファイルを読み込み</button>
+        <button class="danger" id="deleteAllCombosBtn">全コンボ削除</button>
+        <input class="hidden" id="importCombosFile" type="file" accept="application/json,.json">
+      </div>
+      <div class="hint">↑↓で並び替え、修整で内容変更、削除で個別削除ができます。「全コンボ削除」は保存済みコンボをすべて消します。</div>
+    </section>
+    <section class="saved-list" id="savedList"></section>
+  </section>
+</main>
+
+<div class="modal-backdrop hidden" id="customModal" role="dialog" aria-modal="true" aria-labelledby="customModalTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <strong id="customModalTitle">カスタムボタン管理</strong>
+      <button type="button" class="modal-close" id="customModalClose">閉じる</button>
+    </div>
+    <div class="custom-form">
+      <div>
+        <label for="customButtonText">ボタンの文字（12文字まで）</label>
+        <input id="customButtonText" maxlength="12" placeholder="例: SA1 / 空中 / 派生">
+      </div>
+      <div class="custom-colors">
+        <div>
+          <label for="customButtonBg">ボタンの色</label>
+          <div class="color-field"><input id="customButtonBgText" value="#4b3d61" maxlength="7"><input id="customButtonBg" type="color" value="#4b3d61"></div>
+        </div>
+        <div>
+          <label for="customButtonFg">文字の色</label>
+          <div class="color-field"><input id="customButtonFgText" value="#ffffff" maxlength="7"><input id="customButtonFg" type="color" value="#ffffff"></div>
+        </div>
+      </div>
+      <div class="custom-preview"><span class="custom-preview-chip" id="customButtonPreview">プレビュー</span></div>
+      <div class="toolbar">
+        <button type="button" class="save" id="customButtonSave">カスタムボタンを登録</button>
+        <button type="button" id="customButtonCancelEdit" class="hidden">編集をやめる</button>
+      </div>
+    </div>
+    <div class="custom-manager-list" id="customManagerList"></div>
+  </div>
+</div>
+<script>
+(() => {
+  const ASSET = 'assets/';
+  const CHARACTERS = [
+    'リュウ','ルーク','ジェイミー','春麗','ガイル','キンバリー','ジュリ','ケン','ブランカ','ダルシム',
+    'エドモンド本田','ディージェイ','マノン','マリーザ','JP','ザンギエフ','リリー','キャミィ',
+    'ラシード','A.K.I.','エド','豪鬼','ベガ','テリー','舞','エレナ','サガット',
+    'C.ヴァイパー','アレックス','イングリッド','その他'
+  ];
+  const arrows = [
+    {label:'左上',file:'icon_8.png'}, {label:'上',file:'icon_1.png'}, {label:'右上',file:'icon_5.png'},
+    {label:'左',file:'icon_7.png'}, {label:'N',file:'icon_18.png'}, {label:'右',file:'icon_6.png'},
+    {label:'左下',file:'icon_4.png'}, {label:'下',file:'icon_2.png'}, {label:'右下',file:'icon_3.png'}
+  ];
+  const attacks = [
+    {label:'弱P',file:'icon_11.png'}, {label:'中P',file:'icon_10.png'}, {label:'強P',file:'icon_9.png'}, {label:'P',file:'icon_15.png'},
+    {label:'弱K',file:'icon_14.png'}, {label:'中K',file:'icon_13.png'}, {label:'強K',file:'icon_12.png'}, {label:'K',file:'icon_16.png'},
+    {label:'DP',text:'DP'}, {label:'DI',text:'DI'}, {label:'TC',text:'TC\n→'}, {label:'>',text:'>',separator:true}
+  ];
+  const counters = [
+    {label:'PC',text:'PC'}, {label:'CH',text:'CH'}, {label:'JC',text:'JC'}, {label:'cDR',text:'cDR'}, {label:'DR',text:'DR'}
+  ];
+  const holdItem = {label:'HOLD',text:'HOLD',hold:true};
+  const tools = [
+    {label:'改行',text:'↵',tool:'newline'},
+    {label:'HOLD',text:'HOLD',tool:'hold'},
+    {label:'Delay',text:'Delay',tool:'delay'},
+    {label:'カスタム',text:'＋',tool:'custom'}
+  ];
+  const allItems = [...arrows, ...attacks, ...counters, holdItem];
+  const byLabel = Object.fromEntries(allItems.map(x => [x.label, x]));
+
+  const el = id => document.getElementById(id);
+  const createScreen = el('createScreen');
+  const savedScreen = el('savedScreen');
+  const showCreate = el('showCreate');
+  const showSaved = el('showSaved');
+  const character = el('character');
+  const filterCharacter = el('filterCharacter');
+  const comboName = el('comboName');
+  const arrowPad = el('arrowPad');
+  const attackPad = el('attackPad');
+  const counterPad = el('counterPad');
+  const customPaletteWrap = el('customPaletteWrap');
+  const customPad = el('customPad');
+  const sideTools = el('sideTools');
+  const output = el('output');
+  const status = el('status');
+  const savedList = el('savedList');
+  const pasteText = el('pasteText');
+  const exportCombosBtn = el('exportCombosBtn');
+  const importCombosBtn = el('importCombosBtn');
+  const importCombosFile = el('importCombosFile');
+  const deleteAllCombosBtn = el('deleteAllCombosBtn');
+  const saveBtn = el('saveBtn');
+  const customModal = el('customModal');
+  const customModalClose = el('customModalClose');
+  const customButtonText = el('customButtonText');
+  const customButtonBg = el('customButtonBg');
+  const customButtonFg = el('customButtonFg');
+  const customButtonBgText = el('customButtonBgText');
+  const customButtonFgText = el('customButtonFgText');
+  const customButtonPreview = el('customButtonPreview');
+  const customButtonSave = el('customButtonSave');
+  const customButtonCancelEdit = el('customButtonCancelEdit');
+  const customManagerList = el('customManagerList');
+
+  let selected = [];
+  let editingId = null;
+  let editingCustomId = null;
+  const KEY = 'sf6_saved_combos_v2';
+  const CUSTOM_KEY = 'sf6_custom_buttons_v1';
+
+  function initCharacters(){
+    character.innerHTML = CHARACTERS.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    filterCharacter.innerHTML = '<option value="__all">全キャラ</option>' + CHARACTERS.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  }
+
+  function cloneItem(item){ return JSON.parse(JSON.stringify(item)); }
+  function isArrow(item){ return arrows.some(a => a.label === item.label); }
+  function getSaved(){
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch(e){ return []; }
+  }
+  function setSaved(list){ localStorage.setItem(KEY, JSON.stringify(list)); }
+  function sanitizeColor(value, fallback){
+    const v = String(value || '').trim();
+    return /^#[0-9a-fA-F]{6}$/.test(v) ? v.toLowerCase() : fallback;
+  }
+  function getCustomButtons(){
+    try{
+      const raw = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
+      return Array.isArray(raw) ? raw.map((x, idx) => ({
+        id: String(x.id || `custom_${Date.now()}_${idx}`),
+        label: String(x.label || x.text || '').trim().slice(0,12),
+        text: String(x.text || x.label || '').trim().slice(0,12),
+        custom: true,
+        bgColor: sanitizeColor(x.bgColor, '#4b3d61'),
+        textColor: sanitizeColor(x.textColor, '#ffffff')
+      })).filter(x => x.text) : [];
+    }catch(e){ return []; }
+  }
+  function setCustomButtons(list){ localStorage.setItem(CUSTOM_KEY, JSON.stringify(list)); }
+  function customItemFromDefinition(def){
+    return {
+      label: def.label || def.text,
+      text: def.text || def.label,
+      custom: true,
+      customId: def.id,
+      bgColor: sanitizeColor(def.bgColor, '#4b3d61'),
+      textColor: sanitizeColor(def.textColor, '#ffffff')
+    };
+  }
+  function registerImportedCustomButtons(combos){
+    const current = getCustomButtons();
+    const signatures = new Set(current.map(x => `${x.text}|${x.bgColor}|${x.textColor}`));
+    let changed = false;
+    combos.forEach(combo => (combo.items || []).forEach(item => {
+      if(item && item.custom === true){
+        const text = String(item.text || item.label || '').trim().slice(0,12);
+        if(!text) return;
+        const bgColor = sanitizeColor(item.bgColor, '#4b3d61');
+        const textColor = sanitizeColor(item.textColor, '#ffffff');
+        const sig = `${text}|${bgColor}|${textColor}`;
+        if(!signatures.has(sig)){
+          current.push({id:`custom_${Date.now()}_${current.length}`,label:text,text,custom:true,bgColor,textColor});
+          signatures.add(sig);
+          changed = true;
+        }
+      }
+    }));
+    if(changed){ setCustomButtons(current); renderCustomPad(); renderCustomManager(); }
+  }
+
+  function buildShareData(){
+    return {
+      app: 'SF6ComboBuilder',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      combos: getSaved()
+    };
+  }
+
+  function normalizeImportedItem(item){
+    if(!item || typeof item !== 'object') return null;
+    const out = {};
+    ['type','label','file','text','customId'].forEach(k => {
+      if(typeof item[k] === 'string') out[k] = item[k];
+    });
+    if(typeof item.bgColor === 'string') out.bgColor = sanitizeColor(item.bgColor, '#4b3d61');
+    if(typeof item.textColor === 'string') out.textColor = sanitizeColor(item.textColor, '#ffffff');
+    if(item.separator === true) out.separator = true;
+    if(item.charged === true) out.charged = true;
+    if(item.custom === true) out.custom = true;
+    if(item.hold === true) out.hold = true;
+    if(!out.label && !out.text && !out.file && out.type !== 'newline') return null;
+    return out;
+  }
+
+  function normalizeImportedCombos(data){
+    const raw = Array.isArray(data) ? data : (data && Array.isArray(data.combos) ? data.combos : []);
+    const now = Date.now();
+    return raw.map((combo, idx) => {
+      if(!combo || typeof combo !== 'object') return null;
+      const items = Array.isArray(combo.items) ? combo.items.map(normalizeImportedItem).filter(Boolean) : [];
+      if(!items.length) return null;
+      return {
+        id: now + idx,
+        character: String(combo.character || 'その他'),
+        name: String(combo.name || '名称なし'),
+        items
+      };
+    }).filter(Boolean);
+  }
+
+  function exportCombos(){
+    const list = getSaved();
+    if(!list.length){
+      alert('書き出す保存済みコンボがありません。');
+      return;
+    }
+    const text = JSON.stringify(buildShareData(), null, 2);
+    const blob = new Blob([text], {type:'application/json'});
+    const a = document.createElement('a');
+    const d = new Date();
+    const ymd = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+    a.href = URL.createObjectURL(blob);
+    a.download = `sf6_combo_list_${ymd}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function importCombosFromFile(file){
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const data = JSON.parse(String(reader.result || ''));
+        const imported = normalizeImportedCombos(data);
+        if(!imported.length){
+          alert('読み込めるコンボが見つかりませんでした。');
+          return;
+        }
+        const ok = confirm(`${imported.length}件のコンボを現在の保存済みに追加します。よろしいですか？`);
+        if(!ok) return;
+        setSaved([...getSaved(), ...imported]);
+        registerImportedCustomButtons(imported);
+        renderSaved();
+        alert('共有コンボを読み込みました。');
+      }catch(e){
+        alert('共有ファイルの読み込みに失敗しました。JSONファイルか確認してください。');
+      }finally{
+        importCombosFile.value = '';
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function makeBtn(item){
+    const b = document.createElement('button');
+    b.type = 'button';
+    const punchLabels = ['弱P','中P','強P','P'];
+    const kickLabels = ['弱K','中K','強K','K'];
+    const systemLabels = ['DP','DI','TC','>'];
+    const extraClass = punchLabels.includes(item.label) ? ' attack-button punch'
+      : kickLabels.includes(item.label) ? ' attack-button kick'
+      : item.label === 'PC' ? ' attack-button pc'
+      : item.label === 'CH' ? ' attack-button ch'
+      : item.label === 'JC' ? ' attack-button jc'
+      : (item.label === 'cDR' || item.label === 'DR') ? ' attack-button drive'
+      : systemLabels.includes(item.label) ? ' attack-button system'
+      : '';
+    b.className = 'icon-button' + extraClass + (item.label === 'TC' ? ' tc-button' : '') + (counters.some(x => x.label === item.label) ? ' counter-button' : '') + (item.label === 'cDR' ? ' cdr-button' : '');
+    b.title = item.label;
+    const labelClass = extraClass ? 'btn-label' : '';
+    if(item.file){
+      b.innerHTML = `<img src="${ASSET}${item.file}" alt="${escapeHtml(item.label)}"><span class="${labelClass}">${escapeHtml(item.label)}</span>`;
+    }else{
+      b.innerHTML = `<strong>${escapeHtml(item.text)}</strong><span class="${labelClass}">${escapeHtml(item.label)}</span>`;
+    }
+    b.addEventListener('click', () => addItem(cloneItem(item)));
+    return b;
+  }
+
+  function makeToolBtn(t){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tool-button' + (t.tool === 'hold' ? ' hold-button' : '') + (t.tool === 'custom' ? ' custom-tool' : '');
+    b.innerHTML = `<strong>${escapeHtml(t.text)}</strong><span>${escapeHtml(t.label)}</span>`;
+    b.addEventListener('click', () => runTool(t.tool));
+    return b;
+  }
+
+  function makeReusableCustomBtn(def){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'reusable-custom-button';
+    b.textContent = def.text || def.label;
+    b.title = `${def.text || def.label}（カスタム）`;
+    b.style.background = sanitizeColor(def.bgColor, '#4b3d61');
+    b.style.color = sanitizeColor(def.textColor, '#ffffff');
+    b.style.borderColor = sanitizeColor(def.textColor, '#ffffff') + '88';
+    b.addEventListener('click', () => addItem(customItemFromDefinition(def)));
+    return b;
+  }
+
+  function renderCustomPad(){
+    const defs = getCustomButtons();
+    customPad.innerHTML = '';
+    customPaletteWrap.classList.toggle('hidden', defs.length === 0);
+    defs.forEach(def => customPad.appendChild(makeReusableCustomBtn(def)));
+  }
+
+  function resetCustomForm(){
+    editingCustomId = null;
+    customButtonText.value = '';
+    customButtonBg.value = '#4b3d61';
+    customButtonFg.value = '#ffffff';
+    customButtonBgText.value = '#4b3d61';
+    customButtonFgText.value = '#ffffff';
+    customButtonSave.textContent = 'カスタムボタンを登録';
+    customButtonCancelEdit.classList.add('hidden');
+    updateCustomPreview();
+  }
+  function updateCustomPreview(){
+    const text = customButtonText.value.trim().slice(0,12) || 'プレビュー';
+    const bg = sanitizeColor(customButtonBgText.value, customButtonBg.value || '#4b3d61');
+    const fg = sanitizeColor(customButtonFgText.value, customButtonFg.value || '#ffffff');
+    customButtonPreview.textContent = text;
+    customButtonPreview.style.background = bg;
+    customButtonPreview.style.color = fg;
+    customButtonPreview.style.borderColor = fg + '88';
+  }
+  function syncColorInputs(source, textInput, picker){
+    const value = sanitizeColor(source.value, picker.value);
+    textInput.value = value;
+    picker.value = value;
+    updateCustomPreview();
+  }
+  function openCustomModal(){
+    customModal.classList.remove('hidden');
+    renderCustomManager();
+    updateCustomPreview();
+    setTimeout(() => customButtonText.focus(), 0);
+  }
+  function closeCustomModal(){ customModal.classList.add('hidden'); resetCustomForm(); }
+  function saveCustomDefinition(){
+    const text = customButtonText.value.trim().slice(0,12);
+    if(!text){ alert('カスタムボタンの文字を入力してください。'); return; }
+    const bgColor = sanitizeColor(customButtonBgText.value, '#4b3d61');
+    const textColor = sanitizeColor(customButtonFgText.value, '#ffffff');
+    const defs = getCustomButtons();
+    if(editingCustomId){
+      const idx = defs.findIndex(x => x.id === editingCustomId);
+      if(idx !== -1) defs[idx] = {...defs[idx],label:text,text,bgColor,textColor,custom:true};
+    }else{
+      defs.push({id:`custom_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,label:text,text,custom:true,bgColor,textColor});
+    }
+    setCustomButtons(defs);
+    renderCustomPad();
+    renderCustomManager();
+    resetCustomForm();
+  }
+  function editCustomDefinition(id){
+    const def = getCustomButtons().find(x => x.id === id);
+    if(!def) return;
+    editingCustomId = id;
+    customButtonText.value = def.text;
+    customButtonBg.value = def.bgColor;
+    customButtonFg.value = def.textColor;
+    customButtonBgText.value = def.bgColor;
+    customButtonFgText.value = def.textColor;
+    customButtonSave.textContent = '変更を保存';
+    customButtonCancelEdit.classList.remove('hidden');
+    updateCustomPreview();
+    customButtonText.focus();
+  }
+  function deleteCustomDefinition(id){
+    const defs = getCustomButtons();
+    const def = defs.find(x => x.id === id);
+    if(!def) return;
+    if(!confirm(`カスタムボタン「${def.text}」を削除しますか？\n保存済みコンボ内の表示は残ります。`)) return;
+    setCustomButtons(defs.filter(x => x.id !== id));
+    if(editingCustomId === id) resetCustomForm();
+    renderCustomPad();
+    renderCustomManager();
+  }
+  function renderCustomManager(){
+    const defs = getCustomButtons();
+    customManagerList.innerHTML = '';
+    if(!defs.length){
+      customManagerList.innerHTML = '<div class="custom-manager-empty">登録済みのカスタムボタンはありません。</div>';
+      return;
+    }
+    defs.forEach(def => {
+      const row = document.createElement('div');
+      row.className = 'custom-manager-row';
+      const sample = document.createElement('div');
+      sample.className = 'custom-manager-sample';
+      sample.textContent = def.text;
+      sample.style.background = def.bgColor;
+      sample.style.color = def.textColor;
+      sample.style.borderColor = def.textColor + '88';
+      const edit = document.createElement('button');
+      edit.type = 'button'; edit.textContent = '編集'; edit.className = 'primary';
+      edit.addEventListener('click', () => editCustomDefinition(def.id));
+      const del = document.createElement('button');
+      del.type = 'button'; del.textContent = '削除'; del.className = 'danger';
+      del.addEventListener('click', () => deleteCustomDefinition(def.id));
+      row.append(sample, edit, del);
+      customManagerList.appendChild(row);
+    });
+  }
+
+  function initButtons(){
+    arrowPad.innerHTML = '';
+    attackPad.innerHTML = '';
+    counterPad.innerHTML = '';
+    sideTools.innerHTML = '';
+    arrows.forEach(i => arrowPad.appendChild(makeBtn(i)));
+    attacks.forEach(i => attackPad.appendChild(makeBtn(i)));
+    counters.forEach(i => counterPad.appendChild(makeBtn(i)));
+    tools.forEach(i => sideTools.appendChild(makeToolBtn(i)));
+    renderCustomPad();
+  }
+
+  function expandLegacyCharged(items){
+    const expanded = [];
+    (items || []).forEach(item => {
+      const copy = cloneItem(item);
+      if(copy.label === 'タメ'){
+        expanded.push(cloneItem(holdItem));
+        return;
+      }
+      const charged = copy.charged === true;
+      delete copy.charged;
+      expanded.push(copy);
+      if(charged) expanded.push(cloneItem(holdItem));
+    });
+    return expanded;
+  }
+
+  function labelFor(i){
+    if(i.type === 'newline') return '改行';
+    return i.label;
+  }
+
+  function appendVisual(parent, item){
+    if(item.type === 'newline'){
+      const br = document.createElement('div');
+      br.className = 'newline';
+      parent.appendChild(br);
+      return;
+    }
+    if(item.file){
+      const img = document.createElement('img');
+      img.src = ASSET + item.file;
+      img.alt = item.label;
+      img.title = item.label;
+      parent.appendChild(img);
+      return;
+    }
+    const chip = document.createElement('div');
+    const specialClass = item.label === 'PC' ? ' pc-chip'
+      : item.label === 'CH' ? ' ch-chip'
+      : item.label === 'JC' ? ' jc-chip'
+      : (item.label === 'cDR' || item.label === 'DR') ? ' drive-chip'
+      : item.label === 'HOLD' ? ' hold-chip'
+      : (item.custom === true || (!byLabel[item.label] && !item.separator)) ? ' custom-chip'
+      : '';
+    chip.className = item.separator ? 'out-chip separator' : ('out-chip' + ((item.label === 'Delay' || item.label === 'HOLD' || String(item.text || '').length > 3) ? ' wide-chip' : '') + specialClass);
+    if(item.custom === true){
+      chip.style.background = sanitizeColor(item.bgColor, '#4b3d61');
+      chip.style.color = sanitizeColor(item.textColor, '#ffffff');
+      chip.style.borderColor = sanitizeColor(item.textColor, '#ffffff') + '88';
+    }
+    chip.textContent = item.text || item.label;
+    chip.title = item.label;
+    parent.appendChild(chip);
+  }
+
+  function render(){
+    output.innerHTML = '';
+    if(!selected.length){
+      output.innerHTML = '<span class="empty">ここにアイコンが表示されます</span>';
+    }else{
+      expandLegacyCharged(selected).forEach(i => appendVisual(output, i));
+    }
+    renderStatus();
+  }
+
+  function renderStatus(){
+    status.textContent = selected.length ? '選択中: ' + expandLegacyCharged(selected).map(labelFor).join(' ') : '選択中: なし';
+  }
+
+  function addItem(item){ selected.push(item); render(); }
+
+  function runTool(tool){
+    if(tool === 'newline'){
+      selected.push({type:'newline', label:'改行'});
+      render();
+      return;
+    }
+    if(tool === 'delay'){
+      selected.push({label:'Delay', text:'Delay'});
+      render();
+      return;
+    }
+    if(tool === 'hold'){
+      selected.push(cloneItem(holdItem));
+      render();
+      return;
+    }
+    if(tool === 'custom'){
+      openCustomModal();
+    }
+  }
+
+  function parseText(text){
+    const normalized = text.replace(/\r/g, '').replace(/\n/g, ' 改行 ');
+    const tokens = normalized.split(/\s+/).filter(Boolean);
+    const result = [];
+    for(const raw of tokens){
+      let token = raw.trim();
+      if(!token) continue;
+      if(token === '改行' || token === '↵'){
+        result.push({type:'newline', label:'改行'});
+        continue;
+      }
+      if(token === 'タメ' || token.toUpperCase() === 'HOLD'){
+        result.push(cloneItem(holdItem));
+        continue;
+      }
+      if(token.startsWith('タメ') && byLabel[token.slice(2)]){
+        result.push(cloneItem(byLabel[token.slice(2)]));
+        result.push(cloneItem(holdItem));
+        continue;
+      }
+      if(token === 'TC→') token = 'TC';
+      if(token === 'ディレイ') token = 'Delay';
+      if(byLabel[token]){
+        result.push(cloneItem(byLabel[token]));
+      }else{
+        result.push({label:token, text:token});
+      }
+    }
+    return result;
+  }
+
+  function renderMini(parent, items){
+    parent.innerHTML = '';
+    if(!items || !items.length){
+      parent.textContent = '空';
+      return;
+    }
+    expandLegacyCharged(items).forEach(i => appendVisual(parent, i));
+  }
+
+  function renderSaved(){
+    const list = getSaved();
+    const filter = filterCharacter.value || '__all';
+    savedList.innerHTML = '';
+    const visibleIndexes = list
+      .map((combo, idx) => ({combo, idx}))
+      .filter(x => filter === '__all' || x.combo.character === filter)
+      .map(x => x.idx);
+
+    if(!visibleIndexes.length){
+      savedList.innerHTML = '<section class="panel"><span class="empty">保存済みコンボはありません</span></section>';
+      return;
+    }
+
+    visibleIndexes.forEach((idx, visiblePos) => {
+      const combo = list[idx];
+      const card = document.createElement('div');
+      card.className = 'combo-card';
+
+      const head = document.createElement('div');
+      head.className = 'combo-head';
+      head.innerHTML = `<div class="combo-character">${escapeHtml(combo.character || '未設定')}</div><div class="combo-title">${escapeHtml(combo.name || '名称なし')}</div>`;
+
+      const acts = document.createElement('div');
+      acts.className = 'combo-actions';
+
+      const up = document.createElement('button');
+      up.textContent = '↑';
+      up.title = '上へ移動';
+      if(visiblePos > 0){
+        up.addEventListener('click', () => moveVisible(idx, -1));
+      }else{
+        up.className = 'action-placeholder';
+        up.tabIndex = -1;
+      }
+      acts.appendChild(up);
+
+      const down = document.createElement('button');
+      down.textContent = '↓';
+      down.title = '下へ移動';
+      if(visiblePos < visibleIndexes.length - 1){
+        down.addEventListener('click', () => moveVisible(idx, 1));
+      }else{
+        down.className = 'action-placeholder';
+        down.tabIndex = -1;
+      }
+      acts.appendChild(down);
+
+      const edit = document.createElement('button');
+      edit.textContent = '修整';
+      edit.className = 'primary';
+      edit.title = 'このコンボを修整';
+      edit.addEventListener('click', () => editCombo(idx));
+      acts.appendChild(edit);
+
+      const del = document.createElement('button');
+      del.textContent = '削除';
+      del.className = 'danger';
+      del.title = 'このコンボを削除';
+      del.addEventListener('click', () => deleteCombo(idx));
+      acts.appendChild(del);
+      head.appendChild(acts);
+
+      const mini = document.createElement('div');
+      mini.className = 'mini-output';
+      renderMini(mini, combo.items || []);
+
+      card.appendChild(head);
+      card.appendChild(mini);
+      savedList.appendChild(card);
+    });
+  }
+
+  function editCombo(idx){
+    const list = getSaved();
+    const combo = list[idx];
+    if(!combo) return;
+    editingId = combo.id;
+    selected = (combo.items || []).map(cloneItem);
+    if(CHARACTERS.includes(combo.character)) character.value = combo.character;
+    else character.value = 'その他';
+    comboName.value = combo.name || '名称なし';
+    saveBtn.textContent = '修整を保存';
+    show('create');
+    render();
+    status.textContent = `修整中: ${combo.character || '未設定'} / ${combo.name || '名称なし'}`;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function deleteAllCombos(){
+    const list = getSaved();
+    if(!list.length){
+      alert('削除する保存済みコンボがありません。');
+      return;
+    }
+    const ok = confirm(`保存済みコンボ ${list.length}件をすべて削除します。\nこの操作は元に戻せません。よろしいですか？`);
+    if(!ok) return;
+    setSaved([]);
+    editingId = null;
+    saveBtn.textContent = 'コンボ保存';
+    renderSaved();
+    alert('保存済みコンボをすべて削除しました。');
+  }
+
+  function deleteCombo(idx){
+    const list = getSaved();
+    const combo = list[idx];
+    if(!combo) return;
+    const ok = confirm(`「${combo.character || '未設定'} / ${combo.name || '名称なし'}」を削除しますか？`);
+    if(!ok) return;
+    list.splice(idx, 1);
+    setSaved(list);
+    if(editingId === combo.id){
+      editingId = null;
+      saveBtn.textContent = 'コンボ保存';
+    }
+    renderSaved();
+  }
+
+  function moveVisible(idx, direction){
+    const list = getSaved();
+    const filter = filterCharacter.value || '__all';
+    const visibleIndexes = list
+      .map((combo, i) => ({combo, i}))
+      .filter(x => filter === '__all' || x.combo.character === filter)
+      .map(x => x.i);
+    const pos = visibleIndexes.indexOf(idx);
+    const targetIdx = visibleIndexes[pos + direction];
+    if(pos === -1 || targetIdx === undefined) return;
+    [list[idx], list[targetIdx]] = [list[targetIdx], list[idx]];
+    setSaved(list);
+    renderSaved();
+  }
+
+  function show(which){
+    const isCreate = which === 'create';
+    createScreen.classList.toggle('active', isCreate);
+    savedScreen.classList.toggle('active', !isCreate);
+    showCreate.classList.toggle('active', isCreate);
+    showSaved.classList.toggle('active', !isCreate);
+    showCreate.setAttribute('aria-selected', String(isCreate));
+    showSaved.setAttribute('aria-selected', String(!isCreate));
+    document.querySelectorAll('.create-only').forEach(btn => btn.classList.toggle('hidden', !isCreate));
+    if(!isCreate) renderSaved();
+  }
+
+  function round(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function loadImg(src){
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  function canvasToBlob(canvas){
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('PNG conversion failed')), 'image/png');
+    });
+  }
+
+  async function drawItemsToCanvas(items){
+    items = expandLegacyCharged(items);
+
+    // 画面上の出力スペースとほぼ同じサイズ・折り返しになるように描画する。
+    const chipH = 28;
+    const iconSize = 24;
+    const gap = 5;
+    const pad = 10;
+    const measuredWidth = Math.floor(output.getBoundingClientRect().width || 760);
+    const maxContentWidth = Math.max(180, Math.min(760, measuredWidth - pad * 2 - 4));
+
+    function itemWidth(item){
+      if(item.separator) return 16;
+      const txt = String(item.text || item.label || '');
+      if(item.file) return iconSize;
+      if(item.label === 'HOLD') return 40;
+      if(item.custom === true || (!byLabel[item.label] && !item.separator)){
+        return Math.min(84, Math.max(32, txt.length * 8 + 16));
+      }
+      if(item.label === 'Delay' || txt.length > 3) return Math.min(48, Math.max(32, txt.length * 7 + 12));
+      return 28;
+    }
+
+    const rows = [[]];
+    let currentWidth = 0;
+    for(const item of items){
+      if(item.type === 'newline'){
+        if(rows[rows.length - 1].length) rows.push([]);
+        currentWidth = 0;
+        continue;
+      }
+      const w = itemWidth(item);
+      const addWidth = rows[rows.length - 1].length ? gap + w : w;
+      if(rows[rows.length - 1].length && currentWidth + addWidth > maxContentWidth){
+        rows.push([]);
+        currentWidth = 0;
+      }
+      rows[rows.length - 1].push({item, w});
+      currentWidth += (rows[rows.length - 1].length > 1 ? gap : 0) + w;
+    }
+    while(rows.length > 1 && rows[rows.length - 1].length === 0) rows.pop();
+
+    const rowWidths = rows.map(row => row.reduce((sum, entry, index) => sum + entry.w + (index ? gap : 0), 0));
+    const contentW = Math.max(1, ...rowWidths);
+    const cssWidth = Math.ceil(pad * 2 + contentW);
+    const cssHeight = Math.ceil(pad * 2 + rows.length * chipH + Math.max(0, rows.length - 1) * gap);
+    const scale = 3;
+    const canvas = document.createElement('canvas');
+    canvas.width = cssWidth * scale;
+    canvas.height = cssHeight * scale;
+    const ctx = canvas.getContext('2d', {alpha:false});
+    ctx.scale(scale, scale);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    // 透明画像として貼り付けた際に黒くなるアプリがあるため、背景色を必ず描画する。
+    ctx.fillStyle = '#0b0c10';
+    ctx.fillRect(0, 0, cssWidth, cssHeight);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const imageCache = new Map();
+    async function getImage(file){
+      if(!imageCache.has(file)) imageCache.set(file, loadImg(ASSET + file));
+      return imageCache.get(file);
+    }
+
+    for(let rowIndex = 0; rowIndex < rows.length; rowIndex++){
+      let x = pad;
+      const y = pad + rowIndex * (chipH + gap);
+      for(const entry of rows[rowIndex]){
+        const item = entry.item;
+        const chipW = entry.w;
+        if(item.file){
+          const img = await getImage(item.file);
+          ctx.drawImage(img, x, y + (chipH - iconSize) / 2, iconSize, iconSize);
+        }else{
+          const palette = item.label === 'PC' ? {fill:'#b52d35', stroke:'#ff7077', text:'#ffffff'}
+            : item.label === 'CH' ? {fill:'#e5bd27', stroke:'#ffe47a', text:'#17140b'}
+            : item.label === 'JC' ? {fill:'#7442c4', stroke:'#c5a2ff', text:'#ffffff'}
+            : (item.label === 'cDR' || item.label === 'DR') ? {fill:'#218b50', stroke:'#71dfa0', text:'#ffffff'}
+            : item.label === 'HOLD' ? {fill:'#46516a', stroke:'#9eabc5', text:'#ffffff'}
+            : (item.custom === true || (!byLabel[item.label] && !item.separator)) ? {
+                fill:sanitizeColor(item.bgColor, '#4b3d61'),
+                stroke:sanitizeColor(item.textColor, '#ffffff'),
+                text:sanitizeColor(item.textColor, '#ffffff')
+              }
+            : {fill:'#303443', stroke:'#626a80', text:'#f5f7fb'};
+
+          if(item.separator){
+            ctx.fillStyle = '#f5f7fb';
+            ctx.font = '900 18px system-ui, sans-serif';
+            ctx.fillText(item.text || item.label, x + chipW / 2, y + chipH / 2);
+          }else{
+            ctx.fillStyle = palette.fill;
+            ctx.strokeStyle = palette.stroke;
+            ctx.lineWidth = 1;
+            round(ctx, x + .5, y + .5, chipW - 1, chipH - 1, Math.min(14, chipH / 2));
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = palette.text;
+            ctx.font = (item.label === 'Delay' || item.label === 'HOLD' || item.custom === true)
+              ? '900 9px system-ui, sans-serif'
+              : '900 11px system-ui, sans-serif';
+            const lines = String(item.text || item.label).split('\n');
+            lines.forEach((line, index) => {
+              const offset = (index - (lines.length - 1) / 2) * 10;
+              ctx.fillText(line, x + chipW / 2, y + chipH / 2 + offset);
+            });
+          }
+        }
+        x += chipW + gap;
+      }
+    }
+    return canvas;
+  }
+
+  function downloadCanvasPng(canvas){
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = 'sf6_combo.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  el('undoBtn').addEventListener('click', () => { selected.pop(); render(); });
+  el('clearBtn').addEventListener('click', () => { selected = []; render(); });
+  el('copyTextBtn').addEventListener('click', async () => {
+    const t = expandLegacyCharged(selected).map(labelFor).join(' ');
+    try{
+      await navigator.clipboard.writeText(t);
+      status.textContent = t ? 'コピーしました: ' + t : 'コピーするアイコンがありません';
+    }catch(e){
+      status.textContent = 'コピーに失敗しました。ブラウザ設定を確認してください。';
+    }
+  });
+  el('copyImageBtn').addEventListener('click', async () => {
+    if(!selected.length){ status.textContent = '画像化するアイコンがありません'; return; }
+    status.textContent = '画像を作成しています…';
+
+    try{
+      // Electron版はOSネイティブのクリップボードへPNGを直接書き込む。
+      if(window.sf6Desktop && typeof window.sf6Desktop.copyPngDataUrl === 'function'){
+        const canvas = await drawItemsToCanvas(selected);
+        await window.sf6Desktop.copyPngDataUrl(canvas.toDataURL('image/png'));
+        status.textContent = '画像をクリップボードへコピーしました';
+        return;
+      }
+
+      // ブラウザ版はユーザー操作中にClipboardItemを作成し、描画完了後のBlobを渡す。
+      if(navigator.clipboard && typeof navigator.clipboard.write === 'function' && typeof ClipboardItem !== 'undefined'){
+        const pngPromise = (async () => {
+          const canvas = await drawItemsToCanvas(selected);
+          return canvasToBlob(canvas);
+        })();
+        await navigator.clipboard.write([new ClipboardItem({'image/png': pngPromise})]);
+        status.textContent = '画像をクリップボードへコピーしました';
+        return;
+      }
+
+      const canvas = await drawItemsToCanvas(selected);
+      downloadCanvasPng(canvas);
+      status.textContent = 'この環境では画像コピーに対応していないため、PNGを保存しました';
+    }catch(e){
+      console.error(e);
+      try{
+        const canvas = await drawItemsToCanvas(selected);
+        downloadCanvasPng(canvas);
+        status.textContent = '画像コピーに失敗したため、PNGを保存しました';
+      }catch(saveError){
+        console.error(saveError);
+        status.textContent = '画像作成に失敗しました';
+      }
+    }
+  });
+  el('pasteBuildBtn').addEventListener('click', () => {
+    selected = parseText(pasteText.value);
+    render();
+  });
+  saveBtn.addEventListener('click', () => {
+    if(!selected.length){ status.textContent = '保存するコンボがありません'; return; }
+    const list = getSaved();
+    if(editingId !== null){
+      const idx = list.findIndex(combo => combo.id === editingId);
+      if(idx !== -1){
+        list[idx] = { ...list[idx], character: character.value, name: comboName.value || '名称なし', items: selected.map(cloneItem) };
+        setSaved(list);
+        editingId = null;
+        saveBtn.textContent = 'コンボ保存';
+        status.textContent = '修整内容を保存しました';
+        renderSaved();
+        return;
+      }
+      editingId = null;
+      saveBtn.textContent = 'コンボ保存';
+    }
+    list.push({ id: Date.now(), character: character.value, name: comboName.value || '名称なし', items: selected.map(cloneItem) });
+    setSaved(list);
+    status.textContent = '保存しました';
+    renderSaved();
+  });
+  exportCombosBtn.addEventListener('click', exportCombos);
+  importCombosBtn.addEventListener('click', () => importCombosFile.click());
+  importCombosFile.addEventListener('change', () => importCombosFromFile(importCombosFile.files && importCombosFile.files[0]));
+  deleteAllCombosBtn.addEventListener('click', deleteAllCombos);
+  filterCharacter.addEventListener('change', renderSaved);
+  showCreate.addEventListener('click', () => show('create'));
+  showSaved.addEventListener('click', () => show('saved'));
+  customModalClose.addEventListener('click', closeCustomModal);
+  customModal.addEventListener('click', e => { if(e.target === customModal) closeCustomModal(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && !customModal.classList.contains('hidden')) closeCustomModal(); });
+  customButtonSave.addEventListener('click', saveCustomDefinition);
+  customButtonCancelEdit.addEventListener('click', resetCustomForm);
+  customButtonText.addEventListener('input', updateCustomPreview);
+  customButtonBg.addEventListener('input', () => syncColorInputs(customButtonBg, customButtonBgText, customButtonBg));
+  customButtonFg.addEventListener('input', () => syncColorInputs(customButtonFg, customButtonFgText, customButtonFg));
+  customButtonBgText.addEventListener('input', () => { const v=sanitizeColor(customButtonBgText.value, customButtonBg.value); if(/^#[0-9a-f]{6}$/i.test(customButtonBgText.value.trim())) customButtonBg.value=v; updateCustomPreview(); });
+  customButtonFgText.addEventListener('input', () => { const v=sanitizeColor(customButtonFgText.value, customButtonFg.value); if(/^#[0-9a-f]{6}$/i.test(customButtonFgText.value.trim())) customButtonFg.value=v; updateCustomPreview(); });
+
+  initCharacters();
+  initButtons();
+  render();
+  renderSaved();
+  show('create');
+})();
+</script>
+</body>
+</html>
